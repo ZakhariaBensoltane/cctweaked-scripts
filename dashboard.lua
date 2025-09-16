@@ -1,8 +1,8 @@
-local mon = peripheral.wrap("right")  -- ou "right" selon ton écran
+local mon = peripheral.wrap("back")  -- ou "right" selon ton écran
 mon.clear()
 mon.setTextScale(0.5)
 
-local drive = peripheral.wrap("ae2:drive_0")
+local drive = peripheral.wrap("ae2:controller_0")
 if not drive then
     mon.write("Aucun drive trouvé !")
     return
