@@ -1,4 +1,4 @@
-local monitor = peripheral.wrap("right")  -- ou "left"
+local monitor = peripheral.wrap("left")  -- ou "left"
 monitor.setTextScale(2)
 monitor.clear()
 monitor.setCursorPos(1,1)
