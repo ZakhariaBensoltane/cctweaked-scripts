@@ -1,29 +1,53 @@
-local monitor = peripheral.wrap("left") -- ton moniteur
-local drive = peripheral.wrap("right") -- adapte selon où est ton drive
-local energy = peripheral.wrap("back") -- ton contrôleur avec energy_storage
-
+-- Trouve automatiquement le moniteur
+local monitor = peripheral.find("monitor")
+if not monitor then
+    error("Aucun moniteur trouvé !")
+end
 monitor.clear()
+monitor.setTextScale(0.5)
 monitor.setCursorPos(1,1)
-monitor.write("=== Dashboard AE2 ===")
 
--- Energie
-local stored = energy.getEnergy()
-local max = energy.getMaxEnergyStored()
-local percent = (stored / max) * 100
-monitor.setCursorPos(1,2)
-monitor.write(string.format("Energie: %d / %d RF (%.1f%%)", stored, max, percent))
+-- Trouve automatiquement le contrôleur AE2 (énergie)
+local controller = peripheral.find("ae2:controller")
+-- Trouve automatiquement le drive AE2 (disques)
+local drive = peripheral.find("ae2:drive")
 
--- Inventaire du Drive
-monitor.setCursorPos(1,4)
-monitor.write("Disques AE2 :")
+-- Fonction d'affichage
+local function afficher()
+    monitor.clear()
+    monitor.setCursorPos(1,1)
+    monitor.write("=== Dashboard AE2 ===")
 
-local items = drive.list()
-local line = 5
-for slot, item in pairs(items) do
-    local detail = drive.getItemDetail(slot)
-    if detail then
-        monitor.setCursorPos(1, line)
-        monitor.write(string.format("Slot %d: %s x%d", slot, detail.name, detail.count))
-        line = line + 1
+    -- Partie Energie
+    if controller and controller.getEnergy then
+        local energy = controller.getEnergy()
+        local maxEnergy = controller.getMaxEnergy()
+        local percent = (energy / maxEnergy) * 100
+        monitor.setCursorPos(1,3)
+        monitor.write(string.format("Energie: %d / %d RF (%.1f%%)", energy, maxEnergy, percent))
+    else
+        monitor.setCursorPos(1,3)
+        monitor.write("Pas de controleur AE2 trouvé")
     end
+
+    -- Partie Drive
+    monitor.setCursorPos(1,5)
+    if drive and drive.getStoredItems then
+        local items = drive.list()
+        monitor.write("Disques AE2 :")
+        local y = 6
+        for slot, disk in pairs(items) do
+            monitor.setCursorPos(2, y)
+            monitor.write("Slot " .. slot .. ": " .. disk.name)
+            y = y + 1
+        end
+    else
+        monitor.write("Pas de drive AE2 trouvé")
+    end
+end
+
+-- Boucle infinie
+while true do
+    afficher()
+    sleep(5) -- rafraîchit toutes les 5 secondes
 end
