@@ -1,4 +1,4 @@
-local mon = peripheral.wrap("right")
+local mon = peripheral.wrap("left")
 mon.setTextScale(2)
 mon.setBackgroundColor(colors.black)
 mon.setTextColor(colors.green)
