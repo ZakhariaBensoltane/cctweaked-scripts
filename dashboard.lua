@@ -1,4 +1,4 @@
-local mon = peripheral.wrap("left")  -- ou "right" selon ton écran
+local mon = peripheral.wrap("right")  -- ou "right" selon ton écran
 mon.clear()
 mon.setTextScale(0.5)
 
